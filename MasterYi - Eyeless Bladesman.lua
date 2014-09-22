@@ -56,28 +56,9 @@ if SxOW_downloadNeeded then return end
 function OnLoad()
 	Variables()
 	Menu()
-	LibCheck()
 	myTrueRange = myHero.range + GetDistance(myHero.minBBox)
 		UpdateWeb(true, ScriptName, id, HWID)
 end
-
-function LibCheck()
-	if FileExist(LIB_PATH .."Collision.lua") and FileExist(LIB_PATH .."Prodiction.lua") and FileExist(LIB_PATH .."VPrediction.lua") and FileExist(LIB_PATH .."SOW.lua") then
-		require 'Collision'
-		require 'VPrediction'
-		require 'SOW'
-		require 'Prodiction'
-		
-	else
-	error("You don't meet the requirements to run this script!")
-	if not FileExist(LIB_PATH .."SOW.lua") 			then error("SOW.lua not found") 			end
-	if not FileExist(LIB_PATH .."VPrediction.lua") 	then error("VPrediction.lua not found") 	end
-	if not FileExist(LIB_PATH .."Collision.lua") 	then error("Collision.lua not found") 		end
-	error("The script will now exit")
-	return
-	end
-end
-
 
 function OnTick()
 
