@@ -1,73 +1,15 @@
-local version = "1.03"
+local version = 1.0
+local scriptName = "MasterYi Eyeless Bladesman"
+local Author 		= "knife9707"
+
+local autoUpdate   = true
+local silentUpdate = false
+
+if autoUpdate then
+    SourceUpdater(scriptName, version, "raw.github.com", "/knife9707/Script/raw/master/MasterYi%20-%20Eyeless%20Bladesman.lua", SCRIPT_PATH .. GetCurrentEnv().FILE_NAME):SetSilent(silentUpdate):CheckUpdate()
+end
 
 if myHero.charName ~= "MasterYi" then return end
-
-local IsLoaded = "Eyeless Bladesman"
-local AUTOUPDATE = true
-
----------------------------------------------------------------------
---- AutoUpdate for the script ---------------------------------------
----------------------------------------------------------------------
-local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
-local UPDATE_NAME = "MasterYi - Eyeless Bladesman"
-local UPDATE_HOST = "raw.github.com"
-local UPDATE_PATH = "/knife9707/Script/raw/master/MasterYi%20-%20Eyeless%20Bladesman.lua?chunk="..math.random(1, 1000)
-local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
-local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
-
-function AutoupdaterMsg(msg) print("<font color=\"#FFFF73\">["..IsLoaded.."]:</font> <font color=\"#FFDFBF\">"..msg..".</font>") end
-if AUTOUPDATE then
-    local ServerData = GetWebResult(UPDATE_HOST, UPDATE_PATH)
-    if ServerData then
-        local ServerVersion = string.match(ServerData, "local Version = \"%d+.%d+\"")
-        ServerVersion = string.match(ServerVersion and ServerVersion or "", "%d+.%d+")
-        if ServerVersion then
-            ServerVersion = tonumber(ServerVersion)
-            if tonumber(Version) < ServerVersion then
-                AutoupdaterMsg("A new version is available: ["..ServerVersion.."]")
-                AutoupdaterMsg("The script is updating... please don't press [F9]!")
-                DelayAction(function() DownloadFile(UPDATE_URL, UPDATE_FILE_PATH, function ()
-				AutoupdaterMsg("Successfully updated! ("..Version.." -> "..ServerVersion.."), Please reload (double [F9]) for the updated version!") end) end, 3)
-            else
-                AutoupdaterMsg("Your script is already the latest version: ["..ServerVersion.."]")
-            end
-        end
-    else
-        AutoupdaterMsg("Error downloading version info!")
-    end
-end
----------------------------------------------------------------------
---- AutoDownload the required libraries -----------------------------
----------------------------------------------------------------------
-local REQUIRED_LIBS = 
-  {
-    ["VPrediction"] = "https://raw.github.com/Hellsing/BoL/master/common/VPrediction.lua",
-    ["SOW"] = "https://raw.github.com/Hellsing/BoL/master/common/SOW.lua"
-  }   		
-local DOWNLOADING_LIBS = false
-local DOWNLOAD_COUNT = 0
-local SELF_NAME = GetCurrentEnv() and GetCurrentEnv().FILE_NAME or ""
-
-function AfterDownload()
-	DOWNLOAD_COUNT = DOWNLOAD_COUNT - 1
-	if DOWNLOAD_COUNT == 0 then
-		DOWNLOADING_LIBS = false
-		print("<font color=\"#FFFF73\">["..IsLoaded.."]:</font><font color=\"#FFDFBF\"> Required libraries downloaded successfully, please reload (double [F9]).</font>")
-	end
-end
-
-for DOWNLOAD_LIB_NAME, DOWNLOAD_LIB_URL in pairs(REQUIRED_LIBS) do
-	if FileExist(LIB_PATH .. DOWNLOAD_LIB_NAME .. ".lua") then
-		require(DOWNLOAD_LIB_NAME)
-	else
-		DOWNLOADING_LIBS = true
-		DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
-
-		print("<font color=\"#FFFF73\">["..IsLoaded.."]:</font><font color=\"#FFDFBF\"> Not all required libraries are installed. Downloading: <b><u><font color=\"#73B9FF\">"..DOWNLOAD_LIB_NAME.."</font></u></b> now! Please don't press [F9]!</font>")
-		DownloadFile(DOWNLOAD_LIB_URL, LIB_PATH .. DOWNLOAD_LIB_NAME..".lua", AfterDownload)
-	end
-end
-if DOWNLOADING_LIBS then return end
 
 local levelSequence = {1,3,1,2,1,4,1,3,1,3,4,3,2,3,2,4,2,2}
 local lastAttack, lastWindUpTime, lastAttackCD = 0, 0, 0
@@ -114,16 +56,28 @@ if SxOW_downloadNeeded then return end
 function OnLoad()
 	Variables()
 	Menu()
+	LibCheck()
 	myTrueRange = myHero.range + GetDistance(myHero.minBBox)
-	if heroManager.iCount < 10 then -- borrowed from Sidas Auto Carry, modified to 3v3
-			script_Messager("Too few champions to arrange priorities")
-	elseif heroManager.iCount == 6 and TTMAP then
-		ArrangeTTPriorities()
-	else
-		ArrangePriorities()
-	end
 		UpdateWeb(true, ScriptName, id, HWID)
 end
+
+function LibCheck()
+	if FileExist(LIB_PATH .."Collision.lua") and FileExist(LIB_PATH .."Prodiction.lua") and FileExist(LIB_PATH .."VPrediction.lua") and FileExist(LIB_PATH .."SOW.lua") then
+		require 'Collision'
+		require 'VPrediction'
+		require 'SOW'
+		require 'Prodiction'
+		
+	else
+	error("You don't meet the requirements to run this script!")
+	if not FileExist(LIB_PATH .."SOW.lua") 			then error("SOW.lua not found") 			end
+	if not FileExist(LIB_PATH .."VPrediction.lua") 	then error("VPrediction.lua not found") 	end
+	if not FileExist(LIB_PATH .."Collision.lua") 	then error("Collision.lua not found") 		end
+	error("The script will now exit")
+	return
+	end
+end
+
 
 function OnTick()
 
@@ -389,7 +343,8 @@ function Menu()
 	TargetSelector.name = "MasterYi"
 	MasterYiMenu:addTS(TargetSelector)
 
-	MasterYiMenu:addParam("MasterYiVer", "Version: ", SCRIPT_PARAM_INFO, version)
+	MasterYiMenu:addParam("version", "Version: ", SCRIPT_PARAM_INFO, version)
+	MasterYiMenu:addParam("Author", "Author: ", SCRIPT_PARAM_INFO, Author)
 end
 
 function OnProcessSpell(unit, spell)
@@ -795,3 +750,4 @@ end
 function OnUnload()
 	UpdateWeb(false, ScriptName, id, HWID)
 end
+
