@@ -1,4 +1,4 @@
-local version = "1.02"
+local version = "1.03"
 
 if myHero.charName ~= "MasterYi" then return end
 
@@ -11,7 +11,7 @@ local AUTOUPDATE = true
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_NAME = "MasterYi - Eyeless Bladesman"
 local UPDATE_HOST = "raw.github.com"
-local UPDATE_PATH = "/knife9707/BoL/raw/master/MasterYi%20-%20Eyeless%20Bladesman.lua?chunk="..math.random(1, 1000)
+local UPDATE_PATH = "/knife9707/Script/raw/master/MasterYi%20-%20Eyeless%20Bladesman.lua?chunk="..math.random(1, 1000)
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
 
