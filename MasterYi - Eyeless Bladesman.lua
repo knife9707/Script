@@ -1,4 +1,3 @@
-
 local Author 		= "knife9707"
 
 local UseAutoUpdate = true --if the user dont want an autoupdate he can set it HERE to false
