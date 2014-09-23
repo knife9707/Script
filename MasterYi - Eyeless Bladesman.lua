@@ -1,3 +1,5 @@
+if myHero.charName ~= "MasterYi" then return end
+
 local Author 		= "knife9707"
 
 local UseAutoUpdate = true --if the user dont want an autoupdate he can set it HERE to false
@@ -40,8 +42,6 @@ function UpdateScript()
 end
 if UseAutoUpdate then AddTickCallback(UpdateScript) end
 --[[/Auto update]]--
-
-if myHero.charName ~= "MasterYi" then return end
 
 local levelSequence = {1,3,1,2,1,4,1,3,1,3,4,3,2,3,2,4,2,2}
 local lastAttack, lastWindUpTime, lastAttackCD = 0, 0, 0
