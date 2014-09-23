@@ -1,13 +1,46 @@
-local version = 1.0
-local scriptName = "MasterYi Eyeless Bladesman"
+
 local Author 		= "knife9707"
 
-local autoUpdate   = true
-local silentUpdate = false
+local UseAutoUpdate = true --if the user dont want an autoupdate he can set it HERE to false
+--[[Auto update]]--
+local CurVer = 1.0 --our local version
+local NetVersion = nil --netversion/the version of the script that is online, atm nil, we check it later
+local NeedUpdate = false
+local Do_Once = true
+local ScriptName = "MasterYi - Eyeless Bladesman"
+local Host = "http://github.com"
+local NetFile = Host.."/knife9707/Script/raw/master/"..ScriptName..".lua" --here is the updated script hosted
+local LocalFile = BOL_PATH.."Scripts\\"..ScriptName..".lua" --here is the local file stored
 
-if autoUpdate then
-    SourceUpdater(scriptName, version, "raw.github.com", "/knife9707/Script/raw/master/MasterYi%20-%20Eyeless%20Bladesman.lua", SCRIPT_PATH .. GetCurrentEnv().FILE_NAME):SetSilent(silentUpdate):CheckUpdate()
+function CheckVersion(data)
+    NetVersion = tonumber(data)
+    if type(NetVersion) ~= "number" then return end
+    if NetVersion and NetVersion > CurVer then --if the netversion is bigger then the local => script get an update
+        print("<font color='#FF4000'> >> "..ScriptName..": New version available "..NetVersion..".</font>")
+        print("<font color='#FF4000'> >> "..ScriptName..": Updating, please do not press F9 until update is finished.</font>")
+        NeedUpdate = true  --if we need an update we set it to true
+    else
+        print("<font color='#00BFFF' >> "..ScriptName..": You have the lastest version.</font>")
+    end
 end
+
+function UpdateScript()
+    if Do_Once then    --we execute the upder just once@game start
+        Do_Once = false --after the first start we set it to false, so we dont execute it twice        
+        GetAsyncWebResult(Host, ScriptName.."ver.txt", CheckVersion) -- we check the version file, this lower the traffic and save time        
+    end    
+    if NeedUpdate then --if we need an update, we update
+        NeedUpdate = false --one update is enough, so again false
+        DownloadFile(NetFile, LocalFile, function() --we download the online version and overwrite the local
+        if FileExist(LocalFile) then
+            print("<font color='#00BFFF'> >> "..ScriptName..": Successfully updated v"..CurVer.." -> v"..NetVersion.." - Please reload.</font>")                                
+        end
+    end
+                )
+    end
+end
+if UseAutoUpdate then AddTickCallback(UpdateScript) end
+--[[/Auto update]]--
 
 if myHero.charName ~= "MasterYi" then return end
 
@@ -324,7 +357,7 @@ function Menu()
 	TargetSelector.name = "MasterYi"
 	MasterYiMenu:addTS(TargetSelector)
 
-	MasterYiMenu:addParam("version", "Version: ", SCRIPT_PARAM_INFO, version)
+	MasterYiMenu:addParam("CurVer", "CurVer: ", SCRIPT_PARAM_INFO, CurVer)
 	MasterYiMenu:addParam("Author", "Author: ", SCRIPT_PARAM_INFO, Author)
 end
 
