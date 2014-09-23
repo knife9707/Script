@@ -6,7 +6,7 @@ local NeedUpdate = false
 local Do_Once = true
 local ScriptName = "MasterYi - Eyeless Bladesman"
 local Host = "http://github.com"
-local NetFile = Host.."/knife9707/Script/raw/master/"..ScriptName..".lua" --here is the updated script hosted
+local NetFile = Host.."/"..ScriptName..".lua" --here is the updated script hosted
 local LocalFile = BOL_PATH.."Scripts\\"..ScriptName..".lua" --here is the local file stored
 
 function CheckVersion(data)
